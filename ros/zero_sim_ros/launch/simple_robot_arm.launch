@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- launch basic unity editor functionality -->
+    <include file="$(find zero_sim_ros)/launch/basic_unity_editor.launch"/>
+
+
+
+    <!-- send robot urdf to param server -->
+    <rosparam param="robot_description" file="$(find zero_sim_ros)/urdf/SimpleRobotArm.urdf" command="load"/>
+    <!-- <rosparam param="robot_description" file="$(find zero_sim_ros)/urdf/SimpleRobotArm_ArticulatedBody.urdf" command="load"/> -->
+
+    <!-- TODO: generate this via ZeroSim instead of hacking in the original URDF -->
+    <!-- <arg name="limited" default="false" doc="If true, limits joint range [-PI, PI] on all joints." /> -->
+    <!-- <include file="$(find ur_description)/launch/ur10_upload.launch">
+        <arg name="limited" value="$(arg limited)"/>
+    </include> -->
+
+    <!-- launch controller utils -->    
+    <!-- <include file="$(find zero_sim_ros)/launch/controller_utils.launch"/>  -->
+
+
+
+    <!-- start this controller -->
+    <!--<rosparam file="$(find zero_sim_ros)/controller/arm_controller_ur10.yaml" command="load"/> -->
+    <rosparam file="$(find zero_sim_ros)/controller/simple_robot_arm_controller.yaml" command="load"/>
+    
+    
+    <node name="simple_arm_controller_manager_spawner" pkg="controller_manager" type="spawner" ns="simple_arm_test" args="arm_controller" respawn="false" output="screen"/>
+    
+       
+    <!-- <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/> -->
+   
+
+    </launch>

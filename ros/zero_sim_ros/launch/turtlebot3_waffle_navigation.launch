@@ -1,0 +1,14 @@
+<launch>
+    <!-- ZeroSim requires ROS Bridge using TCP & BSON serialization -->
+    <include file="$(find rosbridge_server)/launch/rosbridge_tcp.launch">
+      <arg name="bson_only_mode" value="true"/>
+    </include>
+
+    <!-- Launch the standard turtlebot3 navigation stack -->
+    <env name="TURTLEBOT3_MODEL" value="waffle"/>
+    <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
+      <arg name="model" value="waffle"/>
+      <arg name="map_file" value="$(find zero_sim_ros)/maps/hospital_map.yaml"/>
+    </include>
+
+</launch>

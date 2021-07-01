@@ -1,0 +1,41 @@
+<launch>
+
+    <!-- 
+        This builds a map from a 2d scanner.  When done you will need to run the following:
+        rosbag play \-\-clock hospital_scan
+     -->
+
+    <!-- Arguments -->
+    <arg name="map_file" default="my_mapfile"/>
+    <arg name="bag_file" default="my_mapfile_bag"/>
+    <arg name="set_base_frame" default="base_footprint"/>
+    <arg name="set_odom_frame" default="odom"/>
+    <arg name="set_map_frame" default="map"/>
+    <arg name="set_scan" default="scan"/>
+
+    <!-- ZeroSim requires ROS Bridge using TCP & BSON serialization -->
+    <include file="$(find rosbridge_server)/launch/rosbridge_tcp.launch">
+        <arg name="bson_only_mode" value="true"/>
+    </include>
+
+    <!-- Record scanning to bagfile -->
+    <node pkg="rosbag" type="record" name="$(arg bag_file)" args="record -O $(arg bag_file) /scan /tf" output="screen"/>
+
+    <!-- Set Use sime time -->
+    <arg name="use_sim_time" value="true"/>
+
+
+    <!-- Gmapping -->
+    <node pkg="gmapping" type="slam_gmapping" name="turtlebot3_slam_gmapping" output="screen">
+        <param name="base_frame" value="$(arg set_base_frame)"/>
+        <param name="odom_frame" value="$(arg set_odom_frame)"/>
+        <param name="map_frame" value="$(arg set_map_frame)"/>
+        <param name="scane" value="$(arg set_scan)"/>
+        <!-- <rosparam command="load" file="$(find turtlebot3_slam)/config/gmapping_params.yaml" /> -->
+    </node>
+
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find zero_sim_ros)/rviz/turtlebot_viewer.rviz"/>
+    
+
+</launch>

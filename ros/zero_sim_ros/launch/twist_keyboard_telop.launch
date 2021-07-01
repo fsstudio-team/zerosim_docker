@@ -1,0 +1,22 @@
+<launch>
+    <!-- 
+        Launches simple keyboard teleop twist control.  This should work for most any robot that
+        accepts the ROS Twist message for control.
+     -->
+
+
+    <!-- ZeroSim requires ROS Bridge using TCP & BSON serialization -->
+    <include file="$(find rosbridge_server)/launch/rosbridge_tcp.launch">
+        <arg name="bson_only_mode" value="true"/>
+    </include>
+
+
+    <!-- launch keyboard teleop -->
+	<node pkg="turtlebot3_teleop" name="twist_keyboard_teleop" type="turtlebot3_teleop_key" output="screen"/> 
+    
+    <!-- launch rviz visualization -->
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find zero_sim_ros)/rviz/turtlebot_viewer.rviz"/>
+    
+
+</launch>

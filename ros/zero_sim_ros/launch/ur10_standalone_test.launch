@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- launch basic unity editor functionality -->
+    <include file="$(find zero_sim_ros)/launch/basic_unity_editor.launch"/>
+
+
+    <!-- send robot urdf to param server -->
+    <rosparam param="robot_description" file="$(find zero_sim_ros)/urdf/UR10_rigged.urdf" command="load"/>
+
+
+    <!-- start this controller -->
+    <rosparam file="$(find zero_sim_ros)/controller/ur10_controller.yaml" command="load"/>
+    
+    
+    <node name="ur10_arm_controller_manager_spawner" pkg="controller_manager" type="spawner" ns="ur_10_control" args="arm_controller" respawn="false" output="screen"/>
+    
+       
+    <!-- Launch the ZeroSim Unity Executable -->
+    <node pkg="zero_sim_ros" type="zo_external_exec.py" name="ur10_demo_zosim" output="screen">
+          <param name="cmd" value="$(find zero_sim_ros)/bin/ur10_demo/ur10_demo.x86_64"/>
+    </node> 
+
+
+    <!-- Launch RQT -->
+    <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui"/>
+`
+    <!-- <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/> -->
+   
+
+    </launch>

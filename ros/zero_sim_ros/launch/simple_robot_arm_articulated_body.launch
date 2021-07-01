@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- launch basic unity editor functionality -->
+    <include file="$(find zero_sim_ros)/launch/basic_unity_editor.launch"/>
+
+
+    <!-- send robot urdf to param server -->
+    <rosparam param="robot_description" file="$(find zero_sim_ros)/urdf/SimpleRobotArm_ArticulatedBody.urdf" command="load"/>
+
+
+    <!-- start this controller -->
+    <rosparam file="$(find zero_sim_ros)/controller/simple_robot_arm_controller_articulated_body.yaml" command="load"/>
+    
+    
+    <node name="simple_arm_controller_manager_spawner" pkg="controller_manager" type="spawner" ns="simple_arm_test" args="arm_controller" respawn="false" output="screen"/>
+    
+       
+    <!-- <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/> -->
+   
+
+    </launch>

@@ -1,0 +1,13 @@
+string model_name                   # name of the Unity prefab model to be spawn
+string model_prefab_name            # this should be an .zosim json file all in text
+string unity_asset_bundle           # the file name of the Unity asset bundle.  If empty  uses the "default_zero_sim_assets"
+string unity_asset_bundle_uri       # URI to download a Unity asset bundle.  If empty  uses the "default_zero_sim_assets"
+string robot_namespace              # spawn robot and all ROS interfaces under this namespace
+geometry_msgs/Pose initial_pose     # only applied to canonical body
+string reference_frame              # initial_pose is defined relative to the frame of this model/body
+                                    # if left empty or "map", then Unity map frame is used
+                                    # if non-existent model/body is specified, an error is returned
+                                    #   and the model is not spawned
+---
+bool success                      # return true if spawn successful
+string status_message             # comments if available
