@@ -74,7 +74,6 @@ RUN /bin/bash -c "source /opt/ros/melodic/setup.bash"
 # update ubuntu and install all dependencies
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         xterm \
-        #freeglut3 \
         openssh-server \
         synaptic \
         nfs-common \
@@ -102,7 +101,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         ros-melodic-rqt* \
         jwm \
         ros-melodic-rviz \
-        ros-melodic-desktop-full &&\
+        ros-melodic-desktop-full \
+        blender &&\
         rm -rf /var/lib/apt/lists/*
 
 # copy some needed libs
@@ -122,8 +122,12 @@ RUN mkdir /code-server &&\
 WORKDIR /novnc
 RUN git clone https://github.com/novnc/noVNC.git
 
-# fix for offline mode -> prefatch websockify
+# fix for noVNC offline mode -> prefetch websockify
 RUN cd ./noVNC/utils && git clone https://github.com/novnc/websockify
+
+# install ZeroSim tools
+COPY ./tools /zerosim_tools/
+RUN echo "export PATH=$PATH:/zerosim_tools" > /etc/environment
 
 # set the environment variables (display -> 99 and LIBGL_ALWAYS_SOFTWARE)
 ENV DISPLAY=":99" \

@@ -16,7 +16,8 @@ jwm  >/jwm.log &
 
 # echo "starting noVNC"
 # /novnc/noVNC/utils/launch.sh --vnc localhost:5900 &
-/novnc/noVNC/utils/launch.sh --vnc localhost:5900 --listen 8083 >/novnc.log &
+# /novnc/noVNC/utils/launch.sh --vnc localhost:5900 --listen 8083 >/novnc.log &
+/novnc/noVNC/utils/novnc_proxy --vnc localhost:5900 --listen 8083 >/novnc.log &
 
 #!/bin/bash
 echo "INITIALIZE ZEROSIM DOCKER CONTAINER!"

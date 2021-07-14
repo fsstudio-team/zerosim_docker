@@ -28,7 +28,7 @@ RUN apt-get update && apt-get -y install \
     xserver-xorg-video-all \
     && rm -rf /var/lib/apt/lists/*
 
-# install system tools like VIM
+# install system tools like VIM 
 RUN apt-get update && apt-get -y install \
     vim \
     && rm -rf /var/lib/apt/lists/*
@@ -128,7 +128,8 @@ WORKDIR $CATKIN_WS
 ENV PYTHONIOENCODING UTF-8
 
 # checking dependencies and installing dependencies
-RUN apt-get update
+RUN apt-get update -y
+RUN apt-get dist-upgrade -y
 RUN rosdep update
 RUN rosdep install --rosdistro $ROS_DISTRO --ignore-src --from-paths src -r -y
 
