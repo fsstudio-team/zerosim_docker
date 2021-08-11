@@ -31,12 +31,21 @@ RUN apt-get update && apt-get -y install \
 # install system tools like VIM 
 RUN apt-get update && apt-get -y install \
     vim \
+    python-pip \
     && rm -rf /var/lib/apt/lists/*
 
 # Micro editor
 RUN curl https://getmic.ro | bash
 RUN mv micro /usr/bin
 
+# Helpful Python Packages
+RUN pip install debugpy
+RUN pip install numpy
+RUN pip install scipy
+RUN pip install pyquaternion
+
+
+# Install 
 # install ROS packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-$ROS_DISTRO-desktop-full \
@@ -77,6 +86,7 @@ RUN apt-get update && apt install -y \
     ros-$ROS_DISTRO-ros-controllers \    
     ros-$ROS_DISTRO-combined-robot-hw \
     ros-$ROS_DISTRO-turtlebot3-teleop \
+    ros-$ROS_DISTRO-rtabmap-ros \
     && rm -rf /var/lib/apt/lists/*
 
 # force upgrade everything
