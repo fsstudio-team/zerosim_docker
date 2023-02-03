@@ -94,3 +94,4 @@ unity/zero-sim-unity/Logs/
 builds/test/
 unity/zero-sim-unity/Assets/BuildReports/Build_2020-13-Aug-12-03-52.buildreport
 unity/zero-sim-unity/Assets/BuildReports/Build_2020-13-Aug-12-03-52.buildreport.meta
+docker/.vscode

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- launch basic unity editor functionality -->
+    <!-- <include file="$(find zero_sim_ros)/launch/basic_unity_editor.launch"/> -->
+
+
+    <!-- send robot urdf to param server -->
+    <!-- <rosparam param="robot_description" file="$(find zero_sim_ros)/urdf/ur10.urdf" command="load"/> -->
+    <!-- send robot urdf to param server -->
+    <include file="$(find ur_description)/launch/ur10_upload.launch">
+        <arg name="limited" value="false"/>
+    </include>
+
+    <!-- start this controller -->
+    <rosparam file="$(find zero_sim_ros)/controller/ur10_controller.yaml" command="load"/>
+    <node name="ur10_arm_controller_manager_spawner" pkg="controller_manager" type="spawner" ns="undefined_ur10" args="arm_controller" respawn="false" output="screen"/>
+
+    <!-- launch ur10 planning execution -->
+    <include file="$(find ur10_moveit_config)/launch/ur10_moveit_planning_execution.launch">
+        <arg name="sim" value="true"/>
+        <arg name="limited" value="true"/>
+    </include>
+
+    <!-- launch rviz from ur package -->
+    <include file="$(find ur10_moveit_config)/launch/moveit_rviz.launch">
+        <arg name="config" value="true"/>
+    </include>
+
+</launch>

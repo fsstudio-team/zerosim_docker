@@ -20,23 +20,23 @@ jwm  >/jwm.log &
 /novnc/noVNC/utils/novnc_proxy --vnc localhost:5900 --listen 8083 >/novnc.log &
 
 #!/bin/bash
-echo "INITIALIZE ZEROSIM DOCKER CONTAINER!"
-set -e
+# echo "INITIALIZE ZEROSIM DOCKER CONTAINER!"
+# set -e
 
 # setup ros environment
-source /etc/profile
-source "/opt/ros/$ROS_DISTRO/setup.bash"
-source /catkin_ws/devel/setup.bash
+# source /etc/profile
+# source "/opt/ros/$ROS_DISTRO/setup.bash"
+# source /catkin_ws/devel/setup.bash
 
 # run catkin build if requested by setting DO_CATKIN_BUILD
-if [ -z "$DO_CATKIN_BUILD" ]
-then
-    echo "No Catkin Build"
-else
-    echo "Catkin Build Requested..."
-    catkin build 
-    source /catkin_ws/devel/setup.bash
-fi
+# if [ -z "$DO_CATKIN_BUILD" ]
+# then
+#     echo "No Catkin Build"
+# else
+#     echo "Catkin Build Requested..."
+#     catkin build 
+#     source /catkin_ws/devel/setup.bash
+# fi
 
 echo "Entrypoint.sh finished executing command: $@"
 

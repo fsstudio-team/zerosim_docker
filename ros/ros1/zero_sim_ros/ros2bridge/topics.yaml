@@ -1,0 +1,41 @@
+topics:
+  -
+    topic: /depth_registered/camera_info
+    type: sensor_msgs/msg/CameraInfo
+    queue_size: 10
+  -
+    topic: /depth_registered/image_rect
+    type: sensor_msgs/msg/Image
+    queue_size: 10
+  -
+    topic: /rgb/camera_info
+    type: sensor_msgs/msg/CameraInfo
+    queue_size: 10
+  -
+    topic: /rgb/image_rect_color
+    type: sensor_msgs/msg/Image
+    queue_size: 10
+  -
+    topic: /camera/depth/points
+    type: sensor_msgs/msg/PointCloud2
+    queue_size: 10
+  -
+    topic: /undefined_ur10/arm_controller/command
+    type: trajectory_msgs/msg/JointTrajectory
+    queue_size: 10
+  - 
+    topic: /joint_states
+    type: sensor_msgs/msg/JointState
+    queue_size: 10
+  - 
+    topic: /tf_static
+    type: tf2_msgs/msg/TFMessage
+    queue_size: 10
+  - 
+    topic: /tf
+    type: tf2_msgs/msg/TFMessage
+    queue_size: 10
+  - 
+    topic: /clock
+    type: rosgraph_msgs/msg/Clock
+    queue_size: 10

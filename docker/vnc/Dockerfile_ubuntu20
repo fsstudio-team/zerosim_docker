@@ -1,0 +1,179 @@
+# See: https://github.com/gismo07/coros/blob/master/Dockerfile
+# To connect to VNC: http://localhost:8083/vnc.html
+
+# OpenGL Support required by ROS RViz
+# FROM zerodog/zerosim_ros AS builder
+# FROM zerodog/zerosim_ros:latest
+
+# local image
+FROM zerosim_ros
+
+# Setup ROS environment
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash"
+
+RUN add-apt-repository ppa:rock-core/qt4
+RUN apt-get update
+
+# update ubuntu and install all dependencies
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        xterm \
+        openssh-server \
+        synaptic \
+        nfs-common \
+        mesa-utils \
+        xfonts-75dpi \
+        libusb-0.1-4 \
+        # python \
+        libglu1-mesa \
+        libqtgui4 \
+        gedit \
+        xvfb \
+        x11vnc \
+        llvm-7-dev \
+        expat \
+        nano \
+        dos2unix \
+        ros-noetic-image-transport \
+        ros-noetic-cv-bridge \
+        # python-pip \
+        libxkbfile-dev \
+        libsecret-1-dev \
+        dos2unix \
+        wget \
+        ros-noetic-rqt \
+        ros-noetic-rqt* \
+        jwm \
+        ros-noetic-rviz \
+        # ros-noetic-desktop-full \
+        blender &&\
+        rm -rf /var/lib/apt/lists/*
+
+
+# install some needed packages and set gcc-8 as default compiler
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    llvm-7 \
+    llvm-dev \
+    autoconf \
+    automake \
+    bison \
+    flex \
+    gettext \
+    libtool \
+    python-dev\
+    git \
+    pkgconf \
+    python-mako \
+    zlib1g-dev \
+    x11proto-gl-dev \
+    libxext-dev \
+    xcb \
+    libx11-xcb-dev \
+    libxcb-dri2-0-dev \
+    libxcb-xfixes0-dev \
+    libdrm-dev \
+    g++ \
+    make \
+    xvfb \
+    x11vnc \
+    g++-8 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8 && \
+    rm -rf /var/lib/apt/lists/*
+    
+# get mesa (using 19.0.2 as later versions dont use the configure script)
+WORKDIR /mesa
+RUN git clone --progress --verbose https://gitlab.freedesktop.org/mesa/mesa.git
+WORKDIR /mesa/mesa
+RUN git checkout mesa-19.0.2
+
+# build and install mesa
+RUN libtoolize && \
+    autoreconf --install && \
+    ./configure \
+        --enable-glx=gallium-xlib \
+        --with-gallium-drivers=swrast,swr \
+        --disable-dri \
+        --disable-gbm \
+        --disable-egl \
+        --enable-gallium-osmesa \
+        --enable-autotools \
+        --enable-llvm \
+        --with-llvm-prefix=/usr/lib/llvm-7/ \
+        --enable-gles1 \
+        --enable-gles2 \
+        --prefix=/usr/local && \
+    make -j 4 && \
+    make install && \
+    rm -rf /mesa
+
+
+
+# UBUNTU WITH MESA GL -----------------------------------------------------------------------
+# FROM docker.pkg.github.com/fsstudio-team/zerosimros/zerosim_ros
+# COPY --from=builder /usr/local /usr/local
+
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash"
+
+# copy some needed libs
+COPY ./docker/vnc/libs /libs/
+
+# Setup ROS environment
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash"
+
+RUN apt-get install libpng-dev
+
+# get vs code server
+RUN mkdir /code-server &&\ 
+    wget -qO- https://github.com/cdr/code-server/releases/download/2.1523-vsc1.38.1/code-server2.1523-vsc1.38.1-linux-x86_64.tar.gz \
+    | tar xvz --strip-components=1 -C /code-server
+
+
+# get and setup novnc
+WORKDIR /novnc
+RUN git clone --progress --verbose https://github.com/novnc/noVNC.git
+
+# fix for noVNC offline mode -> prefetch websockify
+RUN cd ./noVNC/utils && git clone --progress --verbose https://github.com/novnc/websockify
+
+# install ZeroSim tools
+COPY ./tools /zerosim_tools/
+RUN echo "export PATH=$PATH:/zerosim_tools" > /etc/environment
+
+# set the environment variables (display -> 99 and LIBGL_ALWAYS_SOFTWARE)
+ENV DISPLAY=":99" \
+    GALLIUM_DRIVER="llvmpipe" \
+    LIBGL_ALWAYS_SOFTWARE="1" \
+    LP_DEBUG="" \
+    LP_NO_RAST="false" \
+    LP_NUM_THREADS="" \
+    LP_PERF="" \
+    MESA_VERSION="19.0.2" \
+    XVFB_WHD="1920x1080x24" \
+    MESA_GLSL="errors" \
+    PASSWORD="1234"
+
+# setup the entrypoint script (starts the xvfb and vnc session)
+COPY ./docker/vnc/entrypoint.sh /entry/
+RUN dos2unix /entry/entrypoint.sh && chmod +x /entry/entrypoint.sh
+ENTRYPOINT ["/entry/entrypoint.sh"]
+
+# source ros for every new terminal session
+# Do not uncomment the lines below if you are going to use ROS Bridge
+# RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+# RUN echo "source /catkin_ws/devel/setup.bash" >> ~/.bashrc
+
+# set our workdir
+WORKDIR /catkin_ws
+
+# expose the vnc, novnc and code-server ports
+EXPOSE 6080
+EXPOSE 8080
+
+#  Publish port for ROS Bridge (required by ZeroSim Unity)
+EXPOSE 9090
+
+# Publish port for ROS Master
+EXPOSE 11311
+
+# Publish port for VNC (connect via http://localhost:8083/vnc.html)
+EXPOSE 8083
+
