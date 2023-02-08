@@ -10,6 +10,9 @@
     <!-- send robot urdf to param server -->
     <include file="$(find zero_sim_ros)/launch/ur10_robotiq_upload.launch"/>
 
+    <arg name="robot_description" default="robot_description"/>
+    <param name="$(arg robot_description)_semantic" textfile="$(find zero_sim_ros)/config/ur10/ur10_robotiq_2f_140.srdf" />
+
     <!-- start this controller -->
     <rosparam file="$(find zero_sim_ros)/controller/ur10_robotiq_controller.yaml" command="load"/>
     <node name="ur10_arm_controller_manager_spawner" pkg="controller_manager" type="spawner" ns="undefined_ur10" args="arm_controller" respawn="false" output="screen"/>

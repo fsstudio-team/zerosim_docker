@@ -30,23 +30,9 @@ Available ROS versions and the corresponding VNC versions:
 
 ## Running
 
+To launch ZeroSim with the Docker container, use the `launch_zerosim_docker.sh` file and pass the image name as argument to the bash file:
 ```bash
-# If pulling from Dockerhub
-$ DOCKER_IMAGE=zerodog/zerosim_ros_vnc:latest
-# If using local image
-$ DOCKER_IMAGE=zerosim_ros:latest
-
-# 11311 = ROS Master
-# 9090 = ROS Bridge
-# 8083 = VNC
-$ docker run -it --rm \
---publish=9090:9090 \
---publish=11311:11311 \
---publish=8083:8083 \
---env DO_CATKIN_BUILD=1 \
---name my_zerosim_vnc_docker \
-$DOCKER_IMAGE \
-bash
+./launch_zerosim_docker.sh zerosim_ros
 ```
 
 ## (optional) Configuring ROS-Bridge

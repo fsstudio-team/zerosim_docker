@@ -3,7 +3,7 @@ set -e
 set -u
 
 # DOCKER_IMAGE=zerodog/zerosim_ros_vnc:latest
-DOCKER_IMAGE=zerosim_ros:latest
+DOCKER_IMAGE=$1:latest
 # 11311 = ROS Master
 # 9090 = ROS Bridge
 # 8083 = VNC
